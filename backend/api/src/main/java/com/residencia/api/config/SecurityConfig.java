@@ -69,7 +69,7 @@ public class SecurityConfig {
             "https://residencialupi.hs.vc",
             "http://www.residencialupi.hs.vc",
             "https://www.residencialupi.hs.vc",
-            "http://localhost")); // Origen de tu frontend (más permisivo para dev)
+            "http://localhost:4200")); // Origen de tu frontend (más permisivo para dev)
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
         configuration.setAllowCredentials(true);

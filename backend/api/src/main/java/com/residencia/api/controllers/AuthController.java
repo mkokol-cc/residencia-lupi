@@ -70,4 +70,22 @@ public class AuthController {
         usuarioRepository.save(user);
         return ResponseEntity.ok("Usuario registrado exitosamente!");
     }
+    /*
+    @GetMapping("/validate")
+    public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String authHeader) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.badRequest().body("Token inválido");
+        }
+
+        String token = authHeader.substring(7);
+
+        boolean isValid = tokenProvider.validateToken(token);
+
+        if (isValid) {
+            return ResponseEntity.ok("Token válido");
+        } else {
+            return ResponseEntity.status(401).body("Token inválido o expirado");
+        }
+    }*/
 }

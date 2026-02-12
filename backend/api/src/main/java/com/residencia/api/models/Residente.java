@@ -30,4 +30,9 @@ public class Residente extends Entidad {
 
     @Column(name = "fecha_ingreso")
     private LocalDate fechaIngreso;
+
+    @Override
+    public String getNombre() {
+        return nombrePila + " " + apellido;
+    }
 }
