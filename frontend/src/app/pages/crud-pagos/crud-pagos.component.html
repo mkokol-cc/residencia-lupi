@@ -1,0 +1,141 @@
+<div class="container p-4 h-100 crud-container">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="text-2xl font-bold">Gestión de Pagos y Cobros</h1>
+    <button mat-raised-button color="primary" (click)="abrirDialogo()">
+      <mat-icon>add</mat-icon> Nuevo Pago
+    </button>
+  </div>
+
+  <!-- Filtros Avanzados -->
+  <form [formGroup]="filterForm" class="mb-4 p-3 border rounded bg-light">
+    <div class="row">
+      <!-- Entidad -->
+      <div class="col-md-3">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Entidad</mat-label>
+          <input type="text" matInput formControlName="entidadId" [matAutocomplete]="autoEntidad">
+          <mat-autocomplete #autoEntidad="matAutocomplete" [displayWith]="displayEntidad">
+            <mat-option [value]="null">Todas</mat-option>
+            <mat-option *ngFor="let entidad of filteredEntidades | async" [value]="entidad">
+              {{entidad.nombre}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+
+      <!-- Método de Pago -->
+      <div class="col-md-3">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Método de Pago</mat-label>
+            <mat-select formControlName="metodoId">
+              <mat-option [value]="null">Todos</mat-option>
+              <mat-option *ngFor="let metodo of metodosDePago" [value]="metodo.id">
+                {{metodo.nombre}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+      </div>
+
+      <!-- Rango de Fechas -->
+      <div class="col-md-3">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Fecha Desde</mat-label>
+            <input matInput [matDatepicker]="pickerInicio" formControlName="fechaInicio">
+            <mat-datepicker-toggle matSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+            <mat-datepicker #pickerInicio></mat-datepicker>
+          </mat-form-field>
+      </div>
+
+      <div class="col-md-3">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Fecha Hasta</mat-label>
+            <input matInput [matDatepicker]="pickerFin" formControlName="fechaFin">
+            <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
+            <mat-datepicker #pickerFin></mat-datepicker>
+          </mat-form-field>
+      </div>
+    
+    </div>
+    <div class="row mt-2">
+            <!-- Rango de Montos -->
+            <div class="col-md-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Monto Mínimo</mat-label>
+                <input matInput type="number" formControlName="montoMin">
+              </mat-form-field>
+            </div>
+            <div class="col-md-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Monto Máximo</mat-label>
+                <input matInput type="number" formControlName="montoMax">
+              </mat-form-field>
+            </div>
+
+            <!-- Ordenar -->
+            <div class="col-md-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Ordenar por</mat-label>
+                <mat-select formControlName="orden">
+                  <mat-option value="fechaHora,desc">Fecha (Más reciente)</mat-option>
+                  <mat-option value="fechaHora,asc">Fecha (Más antiguo)</mat-option>
+                  <mat-option value="monto,desc">Monto (Mayor a menor)</mat-option>
+                  <mat-option value="monto,asc">Monto (Menor a mayor)</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+    
+            <!-- Botón Filtrar -->
+            <div class="col-md-3 d-flex  justify-content-center">
+              <button mat-raised-button color="accent" class="w-100" (click)="applyFilters()">
+                <mat-icon>search</mat-icon> Filtrar
+              </button>
+            </div>
+      </div>
+        
+    </form>
+    <div class="bg-white shadow rounded list-crud-container">
+      <mat-list role="list">
+        @for (pago of pagos; track pago.id) {
+          <mat-list-item role="listitem" >
+            <mat-icon matListItemIcon [ngClass]="pago.esEntrada ? 'text-color-green' : 'text-color-red'">
+              {{ pago.esEntrada ? 'arrow_upward' : 'arrow_downward' }}
+            </mat-icon>
+            <div matListItemTitle class="font-semibold">{{ pago.monto | currency:'$':'symbol':'1.2-2' }}</div>
+            <div matListItemLine>
+              <span>{{ pago.fechaHora | date:'dd/MM/yyyy' }}  </span>
+              @if(pago.esResidencia != undefined) {
+                <span class="text-sm badge text-light" [ngClass]="pago.esResidencia ? 'text-bg-primary' : 'bg-color-pink'">
+                  {{ pago.esResidencia ? 'Residencia' : 'Personal' }}
+                </span>
+              }
+            </div>
+            <div matListItemLine>
+              @if(pago.entidad) {
+                <span class="text-gray-500">{{ pago.metodo.nombre}} - {{pago.entidad.nombre }}</span>
+              }
+            </div>
+
+            <div matListItemMeta>
+              <button mat-icon-button color="primary" (click)="abrirDialogo(pago)" [attr.aria-label]="'Editar pago ' + pago.id">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="eliminarPago(pago.id!)" [attr.aria-label]="'Eliminar pago ' + pago.id">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+        }
+        @empty {
+          <app-no-data-template></app-no-data-template>
+        }
+      </mat-list>
+    </div>
+
+    <mat-paginator [length]="totalElements"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[5, 10, 25, 100]"
+        (page)="onPageChange($event)"
+        aria-label="Seleccionar página">
+    </mat-paginator>
+</div>

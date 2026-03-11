@@ -1,0 +1,18 @@
+.text-color-green {
+    color: #28a745; /* Verde para ingresos */
+}
+
+.text-color-red {
+    color: #dc3545; /* Rojo para egresos */
+}
+
+.bg-color-pink {
+    background-color: #e83e8c; /* Rosa para Personal */
+}
+
+.list-crud-container {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.crud-container { display: flex; flex-direction: column; }

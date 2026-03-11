@@ -1,0 +1,57 @@
+<div class="container p-4 h-100 crud-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="text-2xl font-bold">Gestión de Tipos de Operación</h1>
+      <button mat-raised-button color="primary" (click)="abrirDialogo()">
+        <mat-icon>add</mat-icon> Nuevo Tipo
+      </button>
+    </div>
+
+    <form [formGroup]="filterForm" class="mb-4 p-3 border rounded bg-light">
+      <div class="d-flex gap-3">
+        <div class="flex-grow-1">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Buscar por nombre...</mat-label>
+            <input matInput formControlName="search">
+          </mat-form-field>
+        </div>
+        <button mat-raised-button color="accent" class="col-md-3" (click)="applyFilters()">
+          <mat-icon>search</mat-icon> Buscar
+        </button>
+      </div>
+    </form>
+  
+    <div class="bg-white shadow rounded list-crud-container">
+      <mat-list role="list">
+        @for (tipo of tiposOperacion; track tipo.id) {
+          <mat-list-item role="listitem">
+            <div matListItemTitle class="font-semibold">{{ tipo.nombre }}</div>
+            <div matListItemLine>
+                <span class="text-sm text-gray-600">
+                    {{ tipo.esEgreso ? 'Egreso' : 'Ingreso' }} - 
+                    {{ tipo.impactaEnCaja ? 'Impacta en Caja' : 'No impacta en Caja' }}
+                </span>
+            </div>
+              
+            <div matListItemMeta>
+                <button mat-icon-button color="primary" (click)="abrirDialogo(tipo)" [attr.aria-label]="'Editar tipo ' + tipo.nombre">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="eliminarTipoOperacion(tipo.id!)" [attr.aria-label]="'Eliminar tipo ' + tipo.nombre">
+                  <mat-icon>delete</mat-icon>
+                </button>
+            </div>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+        } @empty {
+          <app-no-data-template></app-no-data-template>
+        }
+      </mat-list>
+    </div>
+
+    <mat-paginator [length]="totalElements"
+                   [pageSize]="pageSize"
+                   [pageSizeOptions]="[5, 10, 25, 100]"
+                   (page)="onPageChange($event)"
+                   aria-label="Seleccionar página">
+    </mat-paginator>
+</div>

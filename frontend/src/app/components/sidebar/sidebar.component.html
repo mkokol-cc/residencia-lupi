@@ -1,0 +1,52 @@
+<div class="d-flex flex-column w-100 h-100" style="background-color: #3f51b5;">
+    <div class="text-center pt-5">
+        <img src="assets/contabilidad.png" alt="LOGO" style="height: 25vh;">
+    </div>
+    <div class="flex-grow-1 align-content-center">
+        <mat-list role="list"><!--
+            <mat-list-item role="listitem">
+                <button mat-button class="w-100 text-light fs-5" [routerLink]="['/ingreso']">Ingresos</button>
+            </mat-list-item>
+            <mat-list-item role="listitem">
+                <button mat-button class="w-100 text-light fs-5" [routerLink]="['/egreso']">Egresos</button>
+            </mat-list-item>
+            <mat-list-item role="listitem">
+                <button mat-button class="w-100 text-light fs-5" [routerLink]="['/rubros']">Rubros</button>
+            </mat-list-item>--><!--
+            <mat-list-item role="listitem">
+                <button mat-button class="w-100 text-light fs-5" [routerLink]="['/movimientos']">Movimientos</button>
+            </mat-list-item>
+            <mat-list-item role="listitem">
+                <button mat-button class="w-100 text-light fs-5" [routerLink]="['/pagos']">Pagos</button>
+            </mat-list-item>-->
+            <mat-list-item role="listitem">
+                <button mat-button class="w-100 text-light fs-5" [routerLink]="['/operaciones']">Operaciones</button>
+            </mat-list-item>
+            <mat-list-item role="listitem">
+                <button mat-button class="w-100 text-light fs-5" [routerLink]="['/tipo-operaciones']">Tipos de Operaciones</button>
+            </mat-list-item>
+            <mat-list-item role="listitem">
+                <button mat-button class="w-100 text-light fs-5" [routerLink]="['/conceptos']">Conceptos</button>
+            </mat-list-item>
+            <mat-list-item role="listitem">
+                <button mat-button class="w-100 text-light fs-5" [routerLink]="['/proveedores']">Proveedores</button>
+            </mat-list-item>
+            <mat-list-item role="listitem">
+                <button mat-button class="w-100 text-light fs-5" [routerLink]="['/residentes']">Residentes</button>
+            </mat-list-item><!--
+            <mat-list-item role="listitem">
+                <button mat-button class="w-100 text-light fs-5" [routerLink]="['/reportes']">Reportes</button>
+            </mat-list-item>-->
+            <mat-list-item role="listitem">
+                <button mat-button class="w-100 text-light fs-5" [routerLink]="['/reportes-operaciones']">Reportes</button>
+            </mat-list-item>
+            <mat-list-item role="listitem">
+                <button mat-button class="w-100 text-light fs-5" [routerLink]="['/caja']">Caja</button>
+            </mat-list-item>
+        </mat-list>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="text-center py-4">
+        <button mat-flat-button color="warn" (click)="logout()"><mat-icon>logout</mat-icon> Cerrar Sesión</button>
+    </div>
+</div>

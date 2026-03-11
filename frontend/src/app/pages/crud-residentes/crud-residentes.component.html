@@ -1,0 +1,92 @@
+<div class="container p-4 h-100 crud-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="text-2xl font-bold">Gestión de Residentes</h1>
+      <div>
+          <button mat-raised-button color="primary" class="me-2" [routerLink]="['/liquidacion-mensual']">
+            <mat-icon>calendar_month</mat-icon> Liquidar Mensualidad
+          </button>
+          <button mat-raised-button color="primary" (click)="abrirDialogo()">
+            <mat-icon>add</mat-icon> Nuevo Residente
+          </button>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <form [formGroup]="filterForm" class="mb-4 p-3 border rounded bg-light">
+      <div class="row">
+        <div class="col-md-5">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Buscar por nombre, apellido o DNI...</mat-label>
+            <input matInput formControlName="search">
+          </mat-form-field>
+        </div>
+        <div class="col-md-4">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Ordenar por</mat-label>
+            <mat-select formControlName="orden">
+              <mat-option value="apellido,asc">Apellido (A-Z)</mat-option>
+              <mat-option value="apellido,desc">Apellido (Z-A)</mat-option>
+              <mat-option value="saldo,desc">Mayor Deuda</mat-option>
+              <mat-option value="saldo,asc">Menor Deuda</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3">
+          <button mat-raised-button color="accent" class="w-100" (click)="applyFilters()">
+            <mat-icon>search</mat-icon> Buscar
+          </button>
+        </div>
+      </div>
+    </form>
+  
+    <div class="bg-white shadow rounded list-crud-container">
+      <mat-list role="list">
+        @for (residente of residentes; track residente.id) {
+          <mat-list-item role="listitem">
+            <!--<div matListItemTitle class="font-semibold">{{ residente.apellido }}, {{ residente.nombrePila }}  <span class="text-sm font-medium" [ngClass]="(residente.saldo || 0) > 0 ? 'text-danger' : 'text-success'">  {{(residente.saldo || 0) > 0 ? 'Adeuda' : 'A Favor'}}: {{ residente.saldo | currency }}</span></div>-->
+            <div matListItemTitle class="font-semibold">{{ residente.apellido }}, {{ residente.nombrePila }}  <span class="text-sm font-medium text-info">  {{(residente.saldo || 0) > 0 ? 'Adeuda' : 'Tiene a Favor'}}: {{ residente.saldo | currency }}</span></div>
+            <div matListItemLine>
+                <span class="text-sm text-gray-600">DNI: {{ residente.dniCuit }}  </span>
+                <span class="text-sm badge text-light" [ngClass]="residente.esActivo ? 'bg-color-green' : 'bg-color-red'">
+                {{ residente.esActivo ? 'Activo' : 'Inactivo' }}
+                </span>
+            </div>
+            <!--
+            <div matListItemLine>
+              <span class="text-sm badge text-light" [ngClass]="residente.esActivo ? 'bg-color-green' : 'bg-color-red'">
+                {{ residente.esActivo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>-->
+            @if(residente.esActivo){
+              <div matListItemLine>
+                <span class="text-sm text-gray-600">Estadía: {{ calcularEstadia(residente.fechaIngreso) }} (desde {{ residente.fechaIngreso | date:'dd/MM/yyyy' }})</span>
+              </div>
+            }
+              
+            <div matListItemMeta>
+                <button mat-icon-button color="primary" (click)="abrirDialogo(residente)" [attr.aria-label]="'Editar residente ' + residente.nombre">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="accent" (click)="verReporte(residente)" [attr.aria-label]="'Ver reporte de ' + residente.nombre">
+                  <mat-icon>assessment</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="eliminarResidente(residente.id!)" [attr.aria-label]="'Eliminar residente ' + residente.nombre">
+                  <mat-icon>delete</mat-icon>
+                </button>
+            </div>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+        }
+        @empty {
+          <app-no-data-template></app-no-data-template>
+        }
+      </mat-list>
+    </div>
+
+    <mat-paginator [length]="totalElements"
+                   [pageSize]="pageSize"
+                   [pageSizeOptions]="[5, 10, 25, 100]"
+                   (page)="onPageChange($event)"
+                   aria-label="Seleccionar página">
+    </mat-paginator>
+</div>

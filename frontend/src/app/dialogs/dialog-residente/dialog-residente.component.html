@@ -1,0 +1,13 @@
+<h2 mat-dialog-title>{{ data ? 'Editar' : 'Agregar' }} Residente</h2>
+
+<mat-dialog-content>
+  <app-form-residente 
+    [residente]="data" 
+    (save)="handleFormSave($event)">
+  </app-form-residente>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="null">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="onSaveClick()">Guardar</button>
+</mat-dialog-actions>

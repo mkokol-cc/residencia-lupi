@@ -1,0 +1,170 @@
+<div class="container p-4 h-100 crud-container">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="text-2xl font-bold">Movimientos de Compra y Venta</h1>
+    <button mat-raised-button color="primary" (click)="abrirDialogo()">
+      <mat-icon>add</mat-icon> Nuevo Movimiento
+    </button>
+  </div>
+
+  <!-- Filtros Avanzados -->
+  <form [formGroup]="filterForm" class="mb-4 p-3 border rounded bg-light">
+    <div class="row">
+      <!-- Entidad -->
+      <div class="col-md-3">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Entidad</mat-label>
+          <input type="text" matInput formControlName="entidadId" [matAutocomplete]="autoEntidad">
+          <mat-autocomplete #autoEntidad="matAutocomplete" [displayWith]="displayEntidad">
+            <mat-option [value]="null">Todas</mat-option>
+            <mat-option *ngFor="let entidad of filteredEntidades | async" [value]="entidad">
+              {{entidad.nombre}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+
+      <!-- Concepto -->
+      <div class="col-md-3">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Concepto</mat-label>
+          <input type="text" matInput formControlName="conceptoId" [matAutocomplete]="autoConcepto">
+          <mat-autocomplete #autoConcepto="matAutocomplete" [displayWith]="displayConcepto">
+            <mat-option [value]="null">Todos</mat-option>
+            <mat-option *ngFor="let concepto of filteredConceptos | async" [value]="concepto">
+              {{concepto.nombre}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+
+      <!-- Rango de Fechas -->
+      <div class="col-md-3">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Fecha Desde</mat-label>
+          <input matInput [matDatepicker]="pickerInicio" formControlName="fechaInicio">
+          <mat-datepicker-toggle matSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+          <mat-datepicker #pickerInicio></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Fecha Hasta</mat-label>
+          <input matInput [matDatepicker]="pickerFin" formControlName="fechaFin">
+          <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFin></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row mt-2">
+      <!-- Rango de Montos -->
+      <div class="col-md-3">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Monto Mínimo</mat-label>
+          <input matInput type="number" formControlName="montoMin">
+        </mat-form-field>
+      </div>
+      <div class="col-md-3">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Monto Máximo</mat-label>
+          <input matInput type="number" formControlName="montoMax">
+        </mat-form-field>
+      </div>
+
+      <div class="col-md-3">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Ordenar por</mat-label>
+          <mat-select formControlName="orden">
+            <mat-option value="fechaHora,desc">Fecha (Más reciente)</mat-option>
+            <mat-option value="fechaHora,asc">Fecha (Más antiguo)</mat-option>
+            <mat-option value="monto,desc">Monto (Mayor a menor)</mat-option>
+            <mat-option value="monto,asc">Monto (Menor a mayor)</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Botón Filtrar -->
+      <div class="col-md-3 d-flex justify-content-center">
+        <button mat-raised-button class="w-100" color="accent" (click)="applyFilters()">
+          <mat-icon>search</mat-icon> Filtrar
+        </button>
+      </div>
+
+    </div>
+  </form>
+
+  <div class="bg-white shadow rounded list-crud-container">
+    <mat-list role="list">
+      @for (movimiento of movimientos; track movimiento.id) {
+        <mat-list-item role="listitem">
+          <mat-icon matListItemIcon [ngClass]="movimiento.esEntrada ? 'text-color-green' : 'text-color-red'">
+            {{ movimiento.esEntrada ? 'arrow_upward' : 'arrow_downward' }}
+          </mat-icon>
+          <div matListItemTitle class="font-semibold">{{ movimiento.monto | currency:'$':'symbol':'1.2-2' }}</div>
+          <div matListItemLine>
+            <span>{{ movimiento.fechaHora | date:'dd/MM/yyyy' }} </span>
+            <span class="text-sm badge text-light" [ngClass]="movimiento.esResidencia ? 'text-bg-primary' : 'bg-color-pink'">
+              {{ movimiento.esResidencia ? 'Residencia' : 'Personal' }}
+            </span>
+          </div>
+          <div matListItemLine class="text-gray-600 italic">@if(movimiento.concepto) {
+              <span class="font-medium">{{ movimiento.concepto.nombre }}</span>
+            }
+            @if(movimiento.entidad) {
+              <span class="text-gray-500"> ({{ movimiento.entidad.nombre }})</span>
+            }
+            {{ movimiento.descripcion ? (': '+movimiento.descripcion) : '' }}
+          </div>
+          
+          <div matListItemMeta>
+            <button mat-icon-button color="primary" (click)="abrirDialogo(movimiento)" [attr.aria-label]="'Editar movimiento ' + movimiento.id">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="eliminarMovimiento(movimiento.id!)" [attr.aria-label]="'Eliminar movimiento ' + movimiento.id">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+      }
+      @empty {
+        <app-no-data-template></app-no-data-template>
+      }
+    </mat-list>
+  </div>
+
+  <mat-paginator [length]="totalElements"
+                 [pageSize]="pageSize"
+                 [pageSizeOptions]="[5, 10, 25, 100]"
+                 (page)="onPageChange($event)"
+                 aria-label="Seleccionar página">
+  </mat-paginator>
+
+  <!-- Modal de Confirmación de Pago -->
+  <ng-template #confirmPagoDialog>
+    <h2 mat-dialog-title>Registrar Pago</h2>
+    <mat-dialog-content>
+      <p>¿Quieres registrar este movimiento como pagado?</p>
+      
+      <div class="mb-3">
+        <mat-radio-group [(ngModel)]="selectedEsResidencia" class="d-flex gap-3">
+          <mat-radio-button [value]="true">De Residencia</mat-radio-button>
+          <mat-radio-button [value]="false">Personal</mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Método de Pago</mat-label>
+        <mat-select [(value)]="selectedMetodoPagoId">
+          <mat-option *ngFor="let metodo of metodosPago" [value]="metodo.id">
+            {{metodo.nombre}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close>No</button>
+      <button mat-raised-button color="primary" (click)="confirmarPago()" [disabled]="!selectedMetodoPagoId || selectedEsResidencia === null">Sí, Confirmar</button>
+    </mat-dialog-actions>
+  </ng-template>
+</div>

@@ -1,0 +1,78 @@
+<form [formGroup]="movimientoForm">
+    <div class="form-container">
+
+      <!-- Origen: Residencia o Personal -->
+      <mat-radio-group formControlName="esResidencia" class="radio-group-spacing">
+        <mat-radio-button [value]="true">De Residencia</mat-radio-button>
+        <mat-radio-button [value]="false">Personal</mat-radio-button>
+      </mat-radio-group>
+
+      <hr>
+
+      <!-- Tipo de Movimiento -->
+      <mat-radio-group formControlName="esEntrada" class="radio-group-spacing">
+        <mat-radio-button [value]="true">Ingreso</mat-radio-button>
+        <mat-radio-button [value]="false">Egreso</mat-radio-button>
+      </mat-radio-group>
+
+      <!-- Monto -->
+      <mat-form-field appearance="outline">
+        <mat-label>Monto</mat-label>
+        <input matInput type="number" formControlName="monto" placeholder="0.00">
+        <mat-error *ngIf="movimientoForm.get('monto')?.hasError('required')">
+          El monto es requerido.
+        </mat-error>
+        <mat-error *ngIf="movimientoForm.get('monto')?.hasError('min')">
+          El monto debe ser mayor a 0.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Fecha -->
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="fechaHora">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="movimientoForm.get('fechaHora')?.hasError('required')">
+          La fecha es requerida.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Entidad -->
+      <mat-form-field appearance="outline">
+        <mat-label>Entidad</mat-label>
+        <input type="text"
+             placeholder="Busque una entidad"
+             matInput
+             formControlName="entidadId"
+             [matAutocomplete]="autoEntidad">
+        <mat-autocomplete #autoEntidad="matAutocomplete" [displayWith]="displayEntidad">
+          <mat-option *ngFor="let entidad of filteredEntidades | async" [value]="entidad">
+            {{entidad.nombre}} ({{entidad.dniCuit}})
+            </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <!-- Concepto -->
+      <mat-form-field appearance="outline">
+        <mat-label>Concepto</mat-label>
+        <input type="text"
+             placeholder="Busque un concepto"
+             matInput
+             formControlName="conceptoId"
+             [matAutocomplete]="autoConcepto">
+        <mat-autocomplete #autoConcepto="matAutocomplete" [displayWith]="displayConcepto">
+          <mat-option *ngFor="let concepto of filteredConceptos | async" [value]="concepto">
+            {{concepto.nombre}}
+            </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <!-- Descripción -->
+      <mat-form-field appearance="outline">
+        <mat-label>Descripción (Opcional)</mat-label>
+        <textarea matInput formControlName="descripcion" cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5"></textarea>
+      </mat-form-field>
+
+    </div>
+</form>

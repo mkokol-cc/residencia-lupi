@@ -1,0 +1,32 @@
+<div class="vw-100 vh-100 d-flex" style="background-color: #3f51b5;">
+    <div class="m-auto mat-elevation-z24">
+        <mat-card class="px-3 pt-1 pb-3">
+            <mat-card-header>
+              <mat-card-title>Bienvenido</mat-card-title>
+              <mat-card-subtitle>Inicie Sesión</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content class="mt-4">
+                <form [formGroup]="form">
+                    <mat-form-field>
+                        <mat-label>Usuario</mat-label>
+                        <input matInput formControlName="username" placeholder="Usuario">
+                        <mat-icon matSuffix>person</mat-icon>
+                    </mat-form-field>
+                    <br>
+                    <mat-form-field>
+                        <mat-label>Contraseña</mat-label>
+                        <input matInput formControlName="password" [type]="hide ? 'password' : 'text'" placeholder="Contraseña">
+                        <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                          <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                        </button>
+                    </mat-form-field>
+                    <br>
+                    <mat-checkbox formControlName="noExpiration">Mantener sesión iniciada</mat-checkbox>
+                </form>
+            </mat-card-content>
+            <mat-card-actions [align]="'end'">
+              <button mat-flat-button color="primary" (click)="login()">Continuar</button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</div>

@@ -1,0 +1,116 @@
+<form [formGroup]="operacionForm">
+    <div class="form-container">
+
+      <!-- Origen: Residencia o Personal -->
+      <mat-radio-group formControlName="esResidencia" class="radio-group-spacing">
+        <mat-radio-button [value]="true">De Residencia</mat-radio-button>
+        <mat-radio-button [value]="false">Personal</mat-radio-button>
+      </mat-radio-group>
+
+      <hr>
+
+      <!-- Tipo de Operación -->
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo de Operación</mat-label>
+        <input type="text"
+               placeholder="Busque un tipo de operación"
+               matInput
+               formControlName="tipoOperacion"
+               [matAutocomplete]="autoTipoOp">
+        <mat-autocomplete #autoTipoOp="matAutocomplete" [displayWith]="displayTipoOperacion">
+          @for (tipo of (filteredTiposOperacion | async) ?? []; track tipo.id) {
+            <mat-option [value]="tipo">
+              {{tipo.nombre}}
+            </mat-option>
+          }
+        </mat-autocomplete>
+        @if (operacionForm.get('tipoOperacion')?.hasError('required')) {
+            <mat-error>El tipo de operación es requerido.</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Pagado Checkbox (condicional) -->
+      @if (operacionForm.get('tipoOperacion')?.value && !operacionForm.get('tipoOperacion')?.value.impactaEnCaja) {
+        <div class="checkbox-container">
+          <mat-checkbox formControlName="pagado">Pagado</mat-checkbox>
+        </div>
+      }
+
+      <!-- Método de Pago -->
+      <mat-form-field appearance="outline">
+        <mat-label>Método de Pago</mat-label>
+        <mat-select formControlName="metodo">
+          @for (metodo of metodosPago; track metodo.id) {
+            <mat-option [value]="metodo">{{metodo.nombre}}</mat-option>
+          }
+        </mat-select>
+        @if (operacionForm.get('metodo')?.hasError('required')) {
+          <mat-error>El método de pago es requerido.</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Monto -->
+      <mat-form-field appearance="outline">
+        <mat-label>Monto</mat-label>
+        <input matInput type="number" formControlName="monto" placeholder="0.00">
+        @if (operacionForm.get('monto')?.hasError('required')) {
+          <mat-error>El monto es requerido.</mat-error>
+        }
+        @if (operacionForm.get('monto')?.hasError('min')) {
+          <mat-error>El monto debe ser mayor a 0.</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Fecha -->
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="fechaHora">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        @if (operacionForm.get('fechaHora')?.hasError('required')) {
+          <mat-error>La fecha es requerida.</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Entidad -->
+      <mat-form-field appearance="outline">
+        <mat-label>Entidad</mat-label>
+        <input type="text"
+             placeholder="Busque una entidad"
+             matInput
+             formControlName="entidad"
+             [matAutocomplete]="autoEntidad">
+        <mat-autocomplete #autoEntidad="matAutocomplete" [displayWith]="displayEntidad">
+          @for (entidad of (filteredEntidades | async) ?? []; track entidad.id) {
+            <mat-option [value]="entidad">
+              {{entidad.nombre}} ({{entidad.dniCuit}})
+            </mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <!-- Concepto -->
+      <mat-form-field appearance="outline">
+        <mat-label>Concepto</mat-label>
+        <input type="text"
+             placeholder="Busque un concepto"
+             matInput
+             formControlName="concepto"
+             [matAutocomplete]="autoConcepto">
+        <mat-autocomplete #autoConcepto="matAutocomplete" [displayWith]="displayConcepto">
+          @for (concepto of (filteredConceptos | async) ?? []; track concepto.id) {
+            <mat-option [value]="concepto">
+              {{concepto.nombre}}
+            </mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <!-- Descripción -->
+      <mat-form-field appearance="outline">
+        <mat-label>Descripción (Opcional)</mat-label>
+        <textarea matInput formControlName="descripcion" cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5"></textarea>
+      </mat-form-field>
+
+    </div>
+</form>

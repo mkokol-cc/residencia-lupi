@@ -1,0 +1,13 @@
+<h2 mat-dialog-title>{{ data ? 'Editar' : 'Agregar' }} Proveedor</h2>
+
+<mat-dialog-content>
+  <app-form-proveedor 
+    [proveedor]="data" 
+    (save)="handleFormSave($event)">
+  </app-form-proveedor>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="null">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="onSaveClick()">Guardar</button>
+</mat-dialog-actions>

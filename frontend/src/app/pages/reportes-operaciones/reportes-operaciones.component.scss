@@ -1,0 +1,12 @@
+.text-right {
+    text-align: right;
+}
+
+.mat-mdc-footer-row {
+    font-weight: bold;
+}
+
+.mat-mdc-footer-row > .mat-mdc-footer-cell:last-child {
+    text-align: right;
+    padding-right: 16px; /* Ajusta según sea necesario */
+}

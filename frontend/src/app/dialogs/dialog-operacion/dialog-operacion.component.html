@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>{{ data.operacion ? 'Editar' : 'Agregar' }} Operación</h2>
+
+<mat-dialog-content>
+  <app-form-operacion 
+    [operacion]="data.operacion"
+    [entidades]="data.entidades"
+    [conceptos]="data.conceptos"
+    [tiposOperacion]="data.tiposOperacion"
+    [metodosPago]="data.metodosPago"
+    (save)="handleFormSave($event)">
+  </app-form-operacion>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="null">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="onSaveClick()">Guardar</button>
+</mat-dialog-actions>

@@ -1,0 +1,70 @@
+<form [formGroup]="pagoForm">
+  <div class="form-container">
+
+    <!-- Origen: Residencia o Personal -->
+    <mat-radio-group formControlName="esResidencia" class="radio-group-spacing">
+      <mat-radio-button [value]="true">De Residencia</mat-radio-button>
+      <mat-radio-button [value]="false">Personal</mat-radio-button>
+    </mat-radio-group>
+
+    <hr>
+
+    <!-- Tipo de Movimiento (esEntrada) -->
+    <mat-radio-group formControlName="esEntrada" class="radio-group-spacing">
+      <mat-radio-button [value]="true">Cobro</mat-radio-button>
+      <mat-radio-button [value]="false">Pago</mat-radio-button>
+    </mat-radio-group>
+
+    <!-- Monto -->
+    <mat-form-field appearance="outline">
+      <mat-label>Monto</mat-label>
+      <input matInput type="number" formControlName="monto" placeholder="0.00">
+      <mat-error *ngIf="pagoForm.get('monto')?.hasError('required')">
+        El monto es requerido.
+      </mat-error>
+      <mat-error *ngIf="pagoForm.get('monto')?.hasError('min')">
+        El monto debe ser mayor a 0.
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Fecha -->
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="fechaHora">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+      <mat-error *ngIf="pagoForm.get('fechaHora')?.hasError('required')">
+        La fecha es requerida.
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Entidad -->
+    <mat-form-field appearance="outline">
+      <mat-label>Entidad (Opcional)</mat-label>
+      <input type="text"
+             placeholder="Busque una entidad"
+             matInput
+             formControlName="entidadId"
+             [matAutocomplete]="autoEntidad">
+      <mat-autocomplete #autoEntidad="matAutocomplete" [displayWith]="displayEntidad">
+        <mat-option *ngFor="let entidad of filteredEntidades | async" [value]="entidad">
+          {{entidad.nombre}} ({{entidad.dniCuit}})
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <!-- Método de Pago -->
+    <mat-form-field appearance="outline">
+      <mat-label>Método de Pago</mat-label>
+      <mat-select formControlName="metodoId">
+        <mat-option *ngFor="let metodo of metodosDePago" [value]="metodo.id">
+          {{ metodo.nombre }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="pagoForm.get('metodoId')?.hasError('required')">
+        El método de pago es requerido.
+      </mat-error>
+    </mat-form-field>
+
+  </div>
+</form>

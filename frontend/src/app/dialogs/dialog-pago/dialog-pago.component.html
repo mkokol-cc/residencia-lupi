@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>{{ data.pago ? 'Editar' : 'Agregar' }} Registro</h2>
+
+<mat-dialog-content>
+  <app-form-pago 
+    [pago]="data.pago"
+    [entidades]="data.entidades"
+    [metodosDePago]="data.metodosDePago"
+    (save)="handleFormSave($event)">
+  </app-form-pago>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="null">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="onSaveClick()">Guardar</button>
+</mat-dialog-actions>

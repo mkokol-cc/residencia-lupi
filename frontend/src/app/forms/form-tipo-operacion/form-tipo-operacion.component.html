@@ -1,0 +1,22 @@
+<form [formGroup]="tipoOperacionForm">
+    <div class="form-container">
+        <!-- Nombre -->
+        <mat-form-field appearance="outline">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="nombre" placeholder="Ej: Compra de insumos">
+            @if (tipoOperacionForm.get('nombre')?.hasError('required')) {
+                <mat-error>El nombre es requerido.</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- Es Egreso -->
+        <div class="checkbox-container">
+            <mat-checkbox formControlName="esEgreso">Es Egreso</mat-checkbox>
+        </div>
+
+        <!-- Impacta en Caja -->
+        <div class="checkbox-container">
+            <mat-checkbox formControlName="impactaEnCaja">Impacta en Caja</mat-checkbox>
+        </div>
+    </div>
+</form>

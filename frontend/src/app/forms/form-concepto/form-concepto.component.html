@@ -1,0 +1,23 @@
+<form [formGroup]="conceptoForm">
+    <div class="form-container">
+        <!-- Nombre -->
+        <mat-form-field appearance="outline">
+            <mat-label>Nombre del Concepto</mat-label>
+            <input matInput formControlName="nombre" placeholder="Ej: Sueldo, Alquiler, Supermercado">
+            @if (conceptoForm.get('nombre')?.hasError('required')) {
+                <mat-error>El nombre es requerido.</mat-error>
+            }
+        </mat-form-field>
+    
+        <!-- Concepto Padre -->
+        <mat-form-field appearance="outline">
+            <mat-label>Concepto Padre (Opcional)</mat-label>
+            <mat-select formControlName="padreId">
+                <mat-option [value]="null">-- Ninguno --</mat-option>
+                @for (concepto of conceptosPadre; track concepto.id) {
+                    <mat-option [value]="concepto.id">{{ concepto.nombre }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    </div>
+</form>

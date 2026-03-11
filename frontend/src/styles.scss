@@ -1,0 +1,55 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+html{
+    --mat-form-field-container-height: 44px;
+}
+
+.mat-mdc-form-field-infix {
+  padding: 10px 0 !important;
+  min-height: 0 !important;
+}
+.mat-datepicker-toggle > button.mat-mdc-icon-button{
+    height: 44px !important;
+}
+
+
+#dashboard-main-content{
+  background:#f5f5f5;
+}
+div.form-container{
+  padding-top: 20px;
+}
+div.form-container mat-form-field{
+  width: 100%;
+  margin-top: 15px;
+}
+.text-color-green{
+  color:#28c117 !important;
+}
+.text-color-red{
+  color:#f44336 !important;
+}
+.bg-color-pink{
+  background-color:#e91e63 !important;
+}
+.bg-color-green{
+  background-color:#28c117 !important;
+}
+.bg-color-red{
+  background-color:#f44336 !important;
+}
+
+.mat-mdc-list-item .mat-mdc-list-item-meta, 
+.mdc-list-item.mdc-list-item--with-three-lines .mdc-list-item__start,
+.mdc-list-item.mdc-list-item--with-two-lines .mdc-list-item__start,
+.mdc-list-item__start {
+  align-self: center !important;
+  margin-top: 0 !important;
+}
+
+.list-crud-container{
+  max-height: 70%; overflow-y: scroll;
+}

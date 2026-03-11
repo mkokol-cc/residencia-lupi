@@ -1,0 +1,15 @@
+<!-- egreso-form.component.html -->
+<div class="form-container my-3 w-100">
+
+    <hr>
+    @for (r of residentes; track r) {
+        <div class="d-flex text-center justify-content-center w-100">
+            <div>{{r.apellido}}, {{r.nombre}} ({{r.dni}})</div>
+            <div>
+                <app-liquidacion-mensual></app-liquidacion-mensual>
+            </div>
+        </div>
+        <hr>
+    }
+
+</div>
