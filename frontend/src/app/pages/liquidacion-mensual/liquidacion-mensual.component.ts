@@ -18,7 +18,11 @@ import { Concepto } from '../../model/concepto';
 import { MovimientoSaldo } from '../../model/movimiento-saldo';
 import { ResidenteService } from '../../custom-services/residente.service';
 import { ConceptoService } from '../../custom-services/concepto.service';
-import { MovimientoSaldoService } from '../../custom-services/movimiento-saldo.service';
+import { OperacionService } from '../../custom-services/operacion.service';
+import { Operacion } from '../../model/operacion';
+import { TipoOperacionService } from '../../custom-services/tipo-operacion.service';
+import { TipoOperacion } from '../../model/tipo-operacion';
+import { NgxCurrencyDirective } from 'ngx-currency';
 
 @Component({
   selector: 'app-liquidacion-mensual',
@@ -35,7 +39,8 @@ import { MovimientoSaldoService } from '../../custom-services/movimiento-saldo.s
     MatTableModule,
     MatButtonModule,
     MatIconModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    NgxCurrencyDirective
   ],
   templateUrl: './liquidacion-mensual.component.html',
   styleUrl: './liquidacion-mensual.component.scss'
@@ -46,6 +51,7 @@ export class LiquidacionMensualComponent implements OnInit {
   residentes: Residente[] = [];
   conceptoMensual?: Concepto;
   conceptoPanales?: Concepto;
+  tipoOperacionVenta?: TipoOperacion;
 
   displayedColumns: string[] = ['nombre', 'mensual', 'panales'];
   dataSource = new MatTableDataSource<any>();
@@ -54,7 +60,8 @@ export class LiquidacionMensualComponent implements OnInit {
     private fb: FormBuilder,
     private residenteService: ResidenteService,
     private conceptoService: ConceptoService,
-    private movimientoService: MovimientoSaldoService,
+    private operacionService: OperacionService,
+    private tipoOperacionService: TipoOperacionService,
     private snackBar: MatSnackBar
   ) {
     const currentYear = new Date().getFullYear();
@@ -78,14 +85,18 @@ export class LiquidacionMensualComponent implements OnInit {
   cargarDatosIniciales(): void {
     forkJoin({
       residentes: this.residenteService.getResidentes(),
-      conceptos: this.conceptoService.getConceptos()
-    }).subscribe(({ residentes, conceptos }) => {
+      conceptos: this.conceptoService.getConceptos(),
+      tipoOperaciones: this.tipoOperacionService.getTiposOperacion()
+    }).subscribe(({ residentes, conceptos, tipoOperaciones }) => {
       this.residentes = residentes.filter(r => r.esActivo);
       
       // Asumo que los conceptos existen con estos nombres.
       // En una app real, sería mejor usar IDs fijos.
       this.conceptoMensual = conceptos.find(c => c.nombre === 'Cuota Mensual');
       this.conceptoPanales = conceptos.find(c => c.nombre === 'Pañales');
+
+      // En una app real, sería mejor usar IDs fijos.
+      this.tipoOperacionVenta = tipoOperaciones.find(to => to.nombre === 'VENTA');
 
       this.inicializarFormularioResidentes();
     });
@@ -119,7 +130,7 @@ export class LiquidacionMensualComponent implements OnInit {
     const ano = formValue.ano;
     const fechaLiquidacion = new Date(ano, mes - 1, 1);
 
-    const movimientosAGuardar: any[] = [];
+    const operacionesAGuardar: any[] = [];
 
     formValue.residentesLiquidacion.forEach((item: any) => {
       const residente = this.residentes.find(r => r.id === item.residenteId);
@@ -127,8 +138,8 @@ export class LiquidacionMensualComponent implements OnInit {
 
       // Generar movimiento para la cuota mensual
       if (item.mensual > 0) {
-        const movimientoMensual: MovimientoSaldo = {
-          esEntrada: false, // Es un gasto/consumo del residente
+        const operacionMensual: Operacion = {
+          tipoOperacion: this.tipoOperacionVenta,
           esResidencia: true, // Es un gasto/consumo del residente
           monto: item.mensual,
           entidad: residente,
@@ -136,13 +147,13 @@ export class LiquidacionMensualComponent implements OnInit {
           descripcion: `Liquidación cuota mensual ${mes}/${ano}`,
           fechaHora: fechaLiquidacion
         };
-        movimientosAGuardar.push(this.movimientoService.guardarMovimiento(movimientoMensual));
+        operacionesAGuardar.push(this.operacionService.guardarOperacion(operacionMensual));
       }
 
       // Generar movimiento para los pañales
       if (item.panales > 0) {
-        const movimientoPanales: MovimientoSaldo = {
-          esEntrada: false,
+        const operacionPanales: Operacion = {
+          tipoOperacion: this.tipoOperacionVenta,
           esResidencia: true, // Es un gasto/consumo del residente
           monto: item.panales,
           entidad: residente,
@@ -150,20 +161,21 @@ export class LiquidacionMensualComponent implements OnInit {
           descripcion: `Liquidación pañales ${mes}/${ano}`,
           fechaHora: fechaLiquidacion
         };
-        movimientosAGuardar.push(this.movimientoService.guardarMovimiento(movimientoPanales));
+        operacionesAGuardar.push(this.operacionService.guardarOperacion(operacionPanales));
       }
     });
+      
 
-    if (movimientosAGuardar.length === 0) {
+    if (operacionesAGuardar.length === 0) {
       this.snackBar.open('No hay montos para liquidar.', 'Cerrar', { duration: 3000 });
       return;
     }
 
-    console.log(movimientosAGuardar)
+    console.log(operacionesAGuardar)
 
-    forkJoin(movimientosAGuardar).subscribe({
+    forkJoin(operacionesAGuardar).subscribe({
       next: () => {
-        this.snackBar.open(`Liquidación de ${movimientosAGuardar.length} items guardada con éxito.`, 'Cerrar', { duration: 3000 });
+        this.snackBar.open(`Liquidación de ${operacionesAGuardar.length} items guardada con éxito.`, 'Cerrar', { duration: 3000 });
         this.inicializarFormularioResidentes(); // Resetea los valores a 0
       },
       error: (err) => {
@@ -172,4 +184,5 @@ export class LiquidacionMensualComponent implements OnInit {
       }
     });
   }
+    
 }

@@ -18,7 +18,6 @@ import java.util.Collections;
 
 @RestController
 @RequestMapping("/api/auth")
-//@CrossOrigin("*")
 public class AuthController {
 
     @Autowired
@@ -54,8 +53,15 @@ public class AuthController {
         }
     }
     
-
+    @GetMapping("/validate")
+    public ResponseEntity<Boolean> validateToken(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.substring(7);
+        boolean isValid = tokenProvider.validateToken(token);
+        return ResponseEntity.ok(isValid);
+    }
+    
     // Endpoint auxiliar para crear el primer usuario (eliminar o proteger después)
+    // TODO: Proteger o eliminar este endpoint en producción
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody LoginRequest signUpRequest) {
         if(usuarioRepository.existsByUsername(signUpRequest.getUsername())) {
@@ -70,22 +76,4 @@ public class AuthController {
         usuarioRepository.save(user);
         return ResponseEntity.ok("Usuario registrado exitosamente!");
     }
-    /*
-    @GetMapping("/validate")
-    public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String authHeader) {
-
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.badRequest().body("Token inválido");
-        }
-
-        String token = authHeader.substring(7);
-
-        boolean isValid = tokenProvider.validateToken(token);
-
-        if (isValid) {
-            return ResponseEntity.ok("Token válido");
-        } else {
-            return ResponseEntity.status(401).body("Token inválido o expirado");
-        }
-    }*/
 }

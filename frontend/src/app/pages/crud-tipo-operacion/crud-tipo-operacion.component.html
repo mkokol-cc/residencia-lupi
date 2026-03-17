@@ -27,8 +27,8 @@
             <div matListItemTitle class="font-semibold">{{ tipo.nombre }}</div>
             <div matListItemLine>
                 <span class="text-sm text-gray-600">
-                    {{ tipo.esEgreso ? 'Egreso' : 'Ingreso' }} - 
-                    {{ tipo.impactaEnCaja ? 'Impacta en Caja' : 'No impacta en Caja' }}
+                    {{ tipo.impactaEnCaja ? 'Impacta en Caja' : 'No impacta en Caja' }} -
+                    {{ tipo.impactaEnCaja ? (tipo.esEgreso ? 'Egreso de Dinero' : 'Ingreso de Dinero') : (tipo.esEgreso ? 'Genera deuda' : 'Genera derecho a cobrar') }}
                 </span>
             </div>
               

@@ -48,9 +48,11 @@ public class ResidenteService extends GenericService<Residente, Residente, Long>
     public Page<ResidenteDTO> searchResidentes(String search, Pageable pageable) {
         StringBuilder jpql = new StringBuilder(
             "SELECT r, " +
-            "(COALESCE((SELECT SUM(m.monto) FROM MovimientoSaldo m WHERE m.entidad.id = r.id), 0) - " +
-            " COALESCE((SELECT SUM(p.monto) FROM Pago p WHERE p.entidad.id = r.id), 0)) as saldo " +
-            "FROM Residente r WHERE 1=1 "
+            "(SELECT COALESCE(SUM(CASE WHEN t.esEgreso = false THEN o.monto ELSE -o.monto END), 0) " +
+            " FROM Operacion o JOIN o.tipoOperacion t " +
+            " WHERE o.entidad.id = r.id AND t.impactaEnCaja = true) as saldo " +
+            "FROM Residente r " +
+            "WHERE 1=1 "
         );
 
         if (search != null && !search.isEmpty()) {

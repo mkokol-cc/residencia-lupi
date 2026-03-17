@@ -5,7 +5,11 @@ import { AuthService } from '../custom-services/auth.service';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = authService.getToken();
-
+  if (req.url.includes('/login')) {
+    //console.log("es el login por lo tanto el interceptor no actua")
+    return next(req);
+  }
+  //console.log("TOKEN EN INTERCEPTOR:", token);
   if (token) {
     const cloned = req.clone({
       setHeaders: {

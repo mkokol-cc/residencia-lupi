@@ -11,7 +11,10 @@ export class PdfService {
 
   public generarPdf(
     filtros: any,
-    reporteData: any[],
+    cuentasPorCobrarData: any[],
+    saldoCuentasPorCobrar: number,
+    cuentasPorPagarData: any[],
+    saldoCuentasPorPagar: number,
     reporteDataView: any[],
     saldo: number,
     opcionesFiltro: any
@@ -40,31 +43,42 @@ export class PdfService {
     doc.setTextColor(0);
     finalY += (splitText.length * 5) + 10;
 
-    // 1. Tabla de Resumen
-    if (reporteData.length > 0) {
-      doc.setFontSize(14);
-      doc.text('Resumen', 14, finalY);
-      finalY += 5;
+    // Tablas de Resumen
+    doc.setFontSize(14);
+    doc.text('Resumen', 14, finalY);
+    finalY += 8;
 
+    // Tabla Cuentas por Cobrar
+    if (cuentasPorCobrarData.length > 0) {
       autoTable(doc, {
         startY: finalY,
-        head: [['Descripción', 'Valor']],
-        body: reporteData.map(item => [item.descripcion, currencyFormatter.format(item.valor)]),
+        head: [['Cuentas por Cobrar', 'Valor']],
+        body: cuentasPorCobrarData.map(item => [item.descripcion, currencyFormatter.format(item.valor)]),
+        foot: [['Saldo por Cobrar', currencyFormatter.format(saldoCuentasPorCobrar)]],
         theme: 'striped',
-        headStyles: { fillColor: [50, 50, 50] },
+        headStyles: { fillColor: [40, 167, 69] }, // Verde
+        footStyles: { fontStyle: 'bold', halign: 'right' },
         columnStyles: { 1: { halign: 'right' } },
-        didParseCell: (data) => {
-          const item = reporteData[data.row.index];
-          if (data.section === 'body' && item?.esTotal) {
-            data.cell.styles.fontStyle = 'bold';
-            data.cell.styles.fillColor = [220, 220, 220];
-          }
-        }
+      });
+      finalY = (doc as any).lastAutoTable.finalY + 10;
+    }
+
+    // Tabla Cuentas por Pagar
+    if (cuentasPorPagarData.length > 0) {
+      autoTable(doc, {
+        startY: finalY,
+        head: [['Cuentas por Pagar', 'Valor']],
+        body: cuentasPorPagarData.map(item => [item.descripcion, currencyFormatter.format(item.valor)]),
+        foot: [['Saldo por Pagar', currencyFormatter.format(saldoCuentasPorPagar)]],
+        theme: 'striped',
+        headStyles: { fillColor: [220, 53, 69] }, // Rojo
+        footStyles: { fontStyle: 'bold', halign: 'right' },
+        columnStyles: { 1: { halign: 'right' } },
       });
       finalY = (doc as any).lastAutoTable.finalY + 15;
     }
 
-    // 2. Tabla de Detalle de Operaciones
+    // Tabla de Detalle de Operaciones
     if (reporteDataView.length > 0) {
       doc.setFontSize(14);
       doc.text('Detalle de Operaciones', 14, finalY);

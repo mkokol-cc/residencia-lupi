@@ -76,22 +76,51 @@
       </div>
     </form>
   
-    <!-- Tabla de Resumen -->
-    <div class="mat-elevation-z8 mb-5">
-      <table mat-table [dataSource]="reporteData">
-        <ng-container matColumnDef="descripcion">
-          <th mat-header-cell *matHeaderCellDef class="bg-dark text-light"> Descripción </th>
-          <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
-        </ng-container>
-        <ng-container matColumnDef="valor">
-          <th mat-header-cell *matHeaderCellDef class="bg-dark text-light text-right"> Valor </th>
-          <td mat-cell *matCellDef="let element" class="text-right"> {{element.valor | currency}} </td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'fw-bold bg-secondary text-light': row.esTotal}"></tr>
-      </table>
+    <!-- Tablas de Resumen -->
+    <div class="row mb-5">
+      <!-- Cuentas por Cobrar -->
+      <div class="col-md-6">
+        <div class="mat-elevation-z8">
+          <table mat-table [dataSource]="cuentasPorCobrarData">
+            <ng-container matColumnDef="descripcion">
+              <th mat-header-cell *matHeaderCellDef class="bg-success-subtle"> Cuentas por Cobrar </th>
+              <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+              <td mat-footer-cell *matFooterCellDef class="fw-bold"> Saldo por Cobrar </td>
+            </ng-container>
+            <ng-container matColumnDef="valor">
+              <th mat-header-cell *matHeaderCellDef class="bg-success-subtle text-right"> Valor </th>
+              <td mat-cell *matCellDef="let element" class="text-right"> {{element.valor | currency}} </td>
+              <td mat-footer-cell *matFooterCellDef class="text-right fw-bold"> {{saldoCuentasPorCobrar | currency}} </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsResumen"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumnsResumen;"></tr>
+            <tr mat-footer-row *matFooterRowDef="displayedColumnsResumen"></tr>
+          </table>
+        </div>
+      </div>
+    
+      <!-- Cuentas por Pagar -->
+      <div class="col-md-6">
+        <div class="mat-elevation-z8">
+          <table mat-table [dataSource]="cuentasPorPagarData">
+            <ng-container matColumnDef="descripcion">
+              <th mat-header-cell *matHeaderCellDef class="bg-danger-subtle"> Cuentas por Pagar </th>
+              <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+              <td mat-footer-cell *matFooterCellDef class="fw-bold"> Saldo por Pagar </td>
+            </ng-container>
+            <ng-container matColumnDef="valor">
+              <th mat-header-cell *matHeaderCellDef class="bg-danger-subtle text-right"> Valor </th>
+              <td mat-cell *matCellDef="let element" class="text-right"> {{element.valor | currency}} </td>
+              <td mat-footer-cell *matFooterCellDef class="text-right fw-bold"> {{saldoCuentasPorPagar | currency}} </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsResumen"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumnsResumen;"></tr>
+            <tr mat-footer-row *matFooterRowDef="displayedColumnsResumen"></tr>
+          </table>
+        </div>
+      </div>
     </div>
-
+  
     <!-- Tabla de Detalle de Operaciones -->
     <div class="mat-elevation-z8 mt-5">
       <table mat-table [dataSource]="reporteDataView">
@@ -103,9 +132,10 @@
         <ng-container matColumnDef="descripcion">
             <th mat-header-cell *matHeaderCellDef class="bg-dark text-light"> Descripcion </th>
             <td mat-cell *matCellDef="let element" class="py-1">
-                <b>{{element.tipoOperacion?.nombre}}</b>
-                <br>{{element.concepto?.padre ? (element.concepto.padre.nombre+' > ') : ''}} {{element.concepto?.nombre}}<br>
-                <small>{{element.descripcion}}</small>
+                <span class="badge text-bg-warning me-2">{{element.tipoOperacion?.nombre}}</span>
+                <span>{{element.concepto?.padre ? (element.concepto.padre.nombre+' > ') : ''}} {{element.concepto?.nombre}}</span>
+                <br>
+                <span class="mt-2 small fst-italic text-muted border-start border-3 ps-2">{{element.descripcion ? element.descripcion : 'Sin Descripcion'}}</span>
             </td>
             <td mat-footer-cell *matFooterCellDef class="text-right fw-bold">
                 SALDO:

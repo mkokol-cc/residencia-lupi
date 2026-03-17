@@ -31,7 +31,7 @@ export class ProveedorService {
       .set('size', size.toString());
     
     if (search) params = params.set('search', search);
-    if (sort) params = params.set('sort', sort);
+    //if (sort) params = params.set('sort', sort);
 
     return this.http.get<any>(`${this.proveedoresUrl}/search`, { params });
   }

@@ -43,9 +43,11 @@ public class ProveedorService extends GenericService<Proveedor, Proveedor, Long>
     public Page<ProveedorDTO> searchProveedores(String search, Pageable pageable) {
         StringBuilder jpql = new StringBuilder(
             "SELECT p, " +
-            "(COALESCE((SELECT SUM(m.monto) FROM MovimientoSaldo m WHERE m.entidad.id = p.id), 0) - " +
-            " COALESCE((SELECT SUM(pg.monto) FROM Pago pg WHERE pg.entidad.id = p.id), 0)) as saldo " +
-            "FROM Proveedor p WHERE 1=1 "
+            "(SELECT COALESCE(SUM(CASE WHEN t.esEgreso = false THEN o.monto ELSE -o.monto END), 0) " +
+            " FROM Operacion o JOIN o.tipoOperacion t " +
+            " WHERE o.entidad.id = p.id AND t.impactaEnCaja = true) as saldo " +
+            "FROM Proveedor p " +
+            "WHERE 1=1 "
         );
 
         if (search != null && !search.isEmpty()) {

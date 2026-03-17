@@ -37,26 +37,75 @@
     <div class="bg-white shadow rounded list-crud-container">
       <mat-list role="list">
         @for (proveedor of proveedores; track proveedor.id) {
-          <mat-list-item role="listitem">
-            <span matListItemTitle class="font-semibold">{{ proveedor.nombre }}
-              <!--<span class="font-medium" [ngClass]="(proveedor.saldo || 0) > 0 ? 'text-success' : 'text-danger'">{{(proveedor.saldo || 0) > 0 ? 'A Favor' : 'Adeuda'}}: {{ proveedor.saldo | currency }}</span>-->
-              <span class="font-medium text-info">{{(proveedor.saldo || 0) > 0 ? 'Tiene a Favor' : 'Adeuda'}}: {{ proveedor.saldo | currency }}</span>
-            </span>
-            <span matListItemLine>CUIT: {{ proveedor.dniCuit }}</span>
-            <span matListItemLine *ngIf="proveedor.direccion">Dirección: {{ proveedor.direccion }}</span>
-            <span matListItemLine *ngIf="proveedor.telefono">Teléfono: {{ proveedor.telefono }}</span>
-            
+          <mat-list-item role="listitem"  class="py-3 h-auto">
+
+            <div class="w-100 d-flex justify-content-between align-items-center">
+
+              <div class="d-flex align-items-center small flex-wrap">
+
+                <div class="text-muted me-2 mb-1 d-flex align-items-center">
+                  <mat-icon class="me-2 text-primary">store</mat-icon>
+                  <span class="fw-semibold me-2">
+                    {{ proveedor.nombre }}
+                  </span>
+                </div>
+                <div class="text-muted me-2 d-flex align-items-center">
+                  <span class="badge"
+                    [ngClass]="(proveedor.saldo || 0) > 0 ? 'text-bg-success' : 'text-bg-danger'">
+                    {{ (proveedor.saldo || 0) > 0 ? 'A favor' : 'Debe' }}
+                    {{ proveedor.saldo | currency }}
+                  </span>
+                </div>
+                <br>
+                <div class="w-100 d-flex align-items-center">
+                  <div class="text-muted me-2 d-flex align-items-center">
+                    <mat-icon class="small-icon me-1">badge</mat-icon>
+                    <span>
+                      {{ proveedor.dniCuit }}
+                    </span>
+                  </div>
+                  @if(proveedor.telefono){
+                    <div class="text-muted me-2 d-flex align-items-center">
+                      <mat-icon class="small-icon me-1">phone</mat-icon>
+                      <span>
+                        {{ proveedor.telefono }}
+                      </span>
+                    </div>
+                  }
+                  @if(proveedor.direccion){
+                    <div class="text-muted me-2 d-flex align-items-center">
+                      <mat-icon class="small-icon me-1">location_on</mat-icon>
+                      <span>
+                        {{ proveedor.direccion }}
+                      </span>
+                    </div>
+                  }
+                </div>
+
+              </div>
+
+            </div>
+
+
             <div matListItemMeta>
-              <button mat-icon-button color="primary" (click)="abrirDialogo(proveedor)" [attr.aria-label]="'Editar proveedor ' + proveedor.nombre">
+              <button mat-icon-button color="primary"
+                (click)="abrirDialogo(proveedor)"
+                [attr.aria-label]="'Editar proveedor ' + proveedor.nombre">
                 <mat-icon>edit</mat-icon>
               </button>
-              <button mat-icon-button color="accent" (click)="verReporte(proveedor)" [attr.aria-label]="'Ver reporte de ' + proveedor.nombre">
+              <button mat-icon-button color="accent"
+                (click)="verReporte(proveedor)"
+                [attr.aria-label]="'Ver reporte de ' + proveedor.nombre">
                 <mat-icon>assessment</mat-icon>
               </button>
-              <button mat-icon-button color="warn" (click)="eliminarProveedor(proveedor.id)" [attr.aria-label]="'Eliminar proveedor ' + proveedor.nombre">
+              <button mat-icon-button color="warn"
+                (click)="eliminarProveedor(proveedor.id)"
+                [attr.aria-label]="'Eliminar proveedor ' + proveedor.nombre">
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
+
+
           </mat-list-item>
           <mat-divider></mat-divider>
         }

@@ -42,8 +42,9 @@
     <div class="bg-white shadow rounded list-crud-container">
       <mat-list role="list">
         @for (residente of residentes; track residente.id) {
+
+          <!--
           <mat-list-item role="listitem">
-            <!--<div matListItemTitle class="font-semibold">{{ residente.apellido }}, {{ residente.nombrePila }}  <span class="text-sm font-medium" [ngClass]="(residente.saldo || 0) > 0 ? 'text-danger' : 'text-success'">  {{(residente.saldo || 0) > 0 ? 'Adeuda' : 'A Favor'}}: {{ residente.saldo | currency }}</span></div>-->
             <div matListItemTitle class="font-semibold">{{ residente.apellido }}, {{ residente.nombrePila }}  <span class="text-sm font-medium text-info">  {{(residente.saldo || 0) > 0 ? 'Adeuda' : 'Tiene a Favor'}}: {{ residente.saldo | currency }}</span></div>
             <div matListItemLine>
                 <span class="text-sm text-gray-600">DNI: {{ residente.dniCuit }}  </span>
@@ -51,12 +52,6 @@
                 {{ residente.esActivo ? 'Activo' : 'Inactivo' }}
                 </span>
             </div>
-            <!--
-            <div matListItemLine>
-              <span class="text-sm badge text-light" [ngClass]="residente.esActivo ? 'bg-color-green' : 'bg-color-red'">
-                {{ residente.esActivo ? 'Activo' : 'Inactivo' }}
-              </span>
-            </div>-->
             @if(residente.esActivo){
               <div matListItemLine>
                 <span class="text-sm text-gray-600">Estadía: {{ calcularEstadia(residente.fechaIngreso) }} (desde {{ residente.fechaIngreso | date:'dd/MM/yyyy' }})</span>
@@ -74,6 +69,91 @@
                   <mat-icon>delete</mat-icon>
                 </button>
             </div>
+          </mat-list-item>-->
+
+
+
+
+
+
+
+
+
+
+
+
+          <mat-list-item role="listitem"  class="py-3 h-auto">
+
+            <div class="w-100 d-flex justify-content-between align-items-center">
+
+              <div class="d-flex align-items-center small flex-wrap">
+
+                <div class="w-100 d-flex align-items-center">
+                  <div class="text-muted me-2 mb-1 d-flex align-items-center">
+                    <mat-icon class="me-2 text-primary">person</mat-icon>
+                    <span class="fw-semibold me-2">
+                      {{ residente.apellido }}, {{ residente.nombrePila }}
+                    </span>
+                  </div>
+                  <div class="text-muted me-2 d-flex align-items-center">
+                    <span class="badge"
+                      [ngClass]="(residente.saldo || 0) > 0 ? 'text-bg-success' : 'text-bg-danger'">
+                      {{ (residente.saldo || 0) > 0 ? 'A favor' : 'Debe' }}
+                      {{ residente.saldo | currency }}
+                    </span>
+                  </div>
+                </div>
+
+                <br>
+                
+                <div class="w-100 d-flex align-items-center">
+                  <div class="text-muted me-2 d-flex align-items-center">
+                    <mat-icon class="small-icon me-1">badge</mat-icon>
+                    <span>
+                      {{ residente.dniCuit }}
+                    </span>
+                  </div>
+                  <!--
+                  <span class="text-sm badge text-light" [ngClass]="residente.esActivo ? 'bg-color-green' : 'bg-color-red'">
+                    {{ residente.esActivo ? 'Activo' : 'Inactivo' }}
+                  </span>-->
+                  <span class="text-decoration-underline" [ngClass]="residente.esActivo ? 'text-success' : 'text-danger'">
+                    {{ residente.esActivo ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </div>
+
+                <br>
+
+                @if(residente.esActivo){
+                  <div class="w-100 d-flex align-items-center">
+                    <span class="mt-2 small fst-italic text-muted border-start border-3 ps-2">Estadía: {{ calcularEstadia(residente.fechaIngreso) }} (desde {{ residente.fechaIngreso | date:'dd/MM/yyyy' }})</span>
+                  </div>
+                }
+
+              </div>
+
+            </div>
+
+
+            <div matListItemMeta>
+              <button mat-icon-button color="primary"
+                (click)="abrirDialogo(residente)"
+                [attr.aria-label]="'Editar residente ' + residente.nombre">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="accent"
+                (click)="verReporte(residente)"
+                [attr.aria-label]="'Ver reporte de ' + residente.nombre">
+                <mat-icon>assessment</mat-icon>
+              </button>
+              <button mat-icon-button color="warn"
+                (click)="eliminarResidente(residente.id)"
+                [attr.aria-label]="'Eliminar residente ' + residente.nombre">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+
+
           </mat-list-item>
           <mat-divider></mat-divider>
         }

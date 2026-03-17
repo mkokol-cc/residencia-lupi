@@ -30,6 +30,7 @@ import { OperacionService } from '../../custom-services/operacion.service';
 import { TipoOperacionService } from '../../custom-services/tipo-operacion.service';
 import { FilterService } from './filter.service';
 import { PdfService } from './pdf.service';
+import { ReporteData } from './reporte-data';
 
 @Component({
   selector: 'app-reportes-operaciones',
@@ -51,12 +52,17 @@ import { PdfService } from './pdf.service';
 export class ReportesOperacionesComponent implements OnInit {
 
   filtroForm: FormGroup;
-  reporteData: any[] = [];
+  reporteData: ReporteData;
   reporteDataView: any[] = [];
   saldo = 0;
 
+  cuentasPorCobrarData: any[] = [];
+  cuentasPorPagarData: any[] = [];
+  saldoCuentasPorCobrar = 0;
+  saldoCuentasPorPagar = 0;
+
   // Columnas para las tablas
-  displayedColumns: string[] = ['descripcion', 'valor'];
+  displayedColumnsResumen: string[] = ['descripcion', 'valor'];
   displayedColumnsView: string[] = ['fecha', 'descripcion', 'importe'];
 
   // Opciones para los filtros
@@ -120,6 +126,18 @@ export class ReportesOperacionesComponent implements OnInit {
     this.reporteData = reporteData;
     this.reporteDataView = reporteDataView;
     this.saldo = saldo;
+
+    this.cuentasPorCobrarData = [
+      { descripcion: 'Ventas (Generado a favor)', valor: this.reporteData.ventas },
+      { descripcion: 'Cobros (Dinero ingresado)', valor: this.reporteData.cobros }
+    ];
+    this.saldoCuentasPorCobrar = this.reporteData.ventas - this.reporteData.cobros;
+
+    this.cuentasPorPagarData = [
+      { descripcion: 'Compras (Deuda generada)', valor: this.reporteData.compras },
+      { descripcion: 'Pagos (Dinero egresado)', valor: this.reporteData.pagos }
+    ];
+    this.saldoCuentasPorPagar = this.reporteData.compras - this.reporteData.pagos;
   }
 
   resetearFiltros(): void {
@@ -130,7 +148,10 @@ export class ReportesOperacionesComponent implements OnInit {
   descargarPDF(): void {
     this.pdfService.generarPdf(
       this.filtroForm.value,
-      this.reporteData,
+      this.cuentasPorCobrarData,
+      this.saldoCuentasPorCobrar,
+      this.cuentasPorPagarData,
+      this.saldoCuentasPorPagar,
       this.reporteDataView,
       this.saldo,
       this.opcionesFiltro

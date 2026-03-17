@@ -9,6 +9,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 
 // Models
 import { TipoOperacion } from '../../model/tipo-operacion';
+import { MatRadioModule } from '@angular/material/radio';
 
 @Component({
   selector: 'app-form-tipo-operacion',
@@ -18,7 +19,8 @@ import { TipoOperacion } from '../../model/tipo-operacion';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatCheckboxModule,
+    //MatCheckboxModule,
+    MatRadioModule
   ],
   templateUrl: './form-tipo-operacion.component.html',
 })

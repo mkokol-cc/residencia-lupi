@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Operacion } from '../../model/operacion';
+import { ReporteData } from './reporte-data';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ export class FilterService {
 
   constructor() { }
 
-  public procesarOperaciones(operaciones: Operacion[], filtros: any): { reporteData: any[], reporteDataView: any[], saldo: number } {
+  public procesarOperaciones(operaciones: Operacion[], filtros: any): { reporteData: ReporteData, reporteDataView: any[], saldo: number } {
     
     const operacionesFiltradas = operaciones.filter(op => {
       const fecha = new Date(op.fechaHora);
@@ -32,30 +33,44 @@ export class FilterService {
       signedMonto: op.tipoOperacion?.esEgreso ? -op.monto : op.monto
     })).sort((a, b) => new Date(a.fechaHora).getTime() - new Date(b.fechaHora).getTime());
 
-    const { ingresos, egresos } = this.calcularTotales(reporteDataView);
-    const saldo = ingresos - egresos;
+    // Calculamos los totales por categoría
+    let ventas = 0;
+    let compras = 0;
+    let cobros = 0;
+    let pagos = 0;
 
-    const reporteData = [
-      { descripcion: 'Total Ingresos', valor: ingresos },
-      { descripcion: 'Total Egresos', valor: egresos },
-      { descripcion: 'SALDO', valor: saldo, esTotal: true },
-    ];
+    operacionesFiltradas.forEach(op => {
+      const tipo = op.tipoOperacion;
+      if (!tipo) return;
 
-    return { reporteData, reporteDataView, saldo };
-  }
-
-  private calcularTotales(operaciones: any[]): { ingresos: number, egresos: number } {
-    let ingresos = 0;
-    let egresos = 0;
-
-    operaciones.forEach(op => {
-      if (op.signedMonto > 0) {
-        ingresos += op.monto;
+      if (tipo.esEgreso) {
+        // Es un egreso
+        if (tipo.impactaEnCaja) {
+          pagos += op.monto; // Egreso + Caja = PAGO
+        } else {
+          compras += op.monto; // Egreso + No Caja = COMPRA
+        }
       } else {
-        egresos += op.monto;
+        // Es un ingreso
+        if (tipo.impactaEnCaja) {
+          cobros += op.monto; // Ingreso + Caja = COBRO
+        } else {
+          ventas += op.monto; // Ingreso + No Caja = VENTA
+        }
       }
     });
 
-    return { ingresos, egresos };
+    // Saldo = Total Ingresos - Total Egresos
+    const saldo = (ventas + cobros) - (compras + pagos);
+
+    // Retornamos un arreglo para que sea compatible con la tabla y el PDF
+    const reporteData:ReporteData = {
+      ventas: ventas,
+      compras: compras,
+      cobros: cobros,
+      pagos: pagos,
+    };
+
+    return { reporteData, reporteDataView, saldo };
   }
 }

@@ -76,13 +76,13 @@
       <div class="col-md-3">
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Monto Mínimo</mat-label>
-          <input matInput type="number" formControlName="montoMin">
+          <input matInput type="text" currencyMask formControlName="montoMin">
         </mat-form-field>
       </div>
       <div class="col-md-3">
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Monto Máximo</mat-label>
-          <input matInput type="number" formControlName="montoMax">
+          <input matInput type="text" currencyMask formControlName="montoMax">
         </mat-form-field>
       </div>
 
@@ -109,7 +109,167 @@
   </form>
 
   <div class="bg-white shadow rounded list-crud-container">
-    <!-- Aquí iría la lista de operaciones, similar a crud-movimientos -->
+    <!-- 
+      NOTA: Para los íconos pequeños se puede usar una clase CSS como la siguiente en 'crud-operaciones.component.scss':
+      .small-icon {
+        font-size: 16px;
+        height: 16px;
+        width: 16px;
+      }
+    -->
+    <mat-list role="list">
+      @for (operacion of operaciones; track operacion.id) {
+        <!--
+        <mat-list-item role="listitem" class="py-2 h-auto align-items-start">
+          <div class="w-100">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="d-flex align-items-center">
+                <mat-icon [ngClass]="operacion.tipoOperacion?.esEgreso ? 'text-color-red' : 'text-color-green'">
+                  {{ operacion.tipoOperacion?.esEgreso ? 'arrow_downward' : 'arrow_upward' }}
+                </mat-icon>
+                <span class="fw-bold fs-5 ms-2">{{ operacion.monto | currency:'$':'symbol':'1.2-2' }}</span>
+              </div>
+              <div class="d-flex flex-column align-items-end">
+                <span class="badge text-bg-info fw-normal">{{ operacion.tipoOperacion?.nombre }}</span>
+                <span class="small text-muted">{{ operacion.fechaHora | date:'dd/MM/yyyy HH:mm' }}</span>
+              </div>
+            </div>
+
+            <div class="mt-2 small">
+              @if(operacion.entidad) {
+                <div>
+                  <mat-icon class="small-icon align-middle">person</mat-icon>
+                  <span class="ms-1 align-middle">{{ operacion.entidad.nombre }}</span>
+                </div>
+              }
+              @if(operacion.concepto) {
+                <div class="mt-1">
+                  <mat-icon class="small-icon align-middle">label</mat-icon>
+                  <span class="ms-1 align-middle">{{ operacion.concepto.nombre }}</span>
+                </div>
+              }
+              <div class="mt-1 d-flex justify-content-between">
+                <div>
+                  @if(operacion.metodo) {
+                    <mat-icon class="small-icon align-middle">credit_card</mat-icon>
+                    <span class="ms-1 align-middle">{{ operacion.metodo.nombre }}</span>
+                  }
+                </div>
+                <div>
+                  <span class="badge" [ngClass]="operacion.esResidencia ? 'text-bg-primary' : 'bg-color-pink'">
+                    {{ operacion.esResidencia ? 'Residencia' : 'Personal' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            @if(operacion.descripcion) {
+              <div class="mt-2 small fst-italic text-muted border-start border-3 ps-2">
+                {{ operacion.descripcion }}
+              </div>
+            }
+          </div>
+          
+          <div matListItemMeta class="ps-3">
+            <button mat-icon-button color="primary" (click)="abrirDialogo(operacion)" [attr.aria-label]="'Editar operación ' + operacion.id">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="eliminarOperacion(operacion.id!)" [attr.aria-label]="'Eliminar operación ' + operacion.id">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </mat-list-item>
+        -->
+        <mat-list-item role="listitem" class="py-1 h-auto">
+
+          <div class="w-100 d-flex justify-content-between align-items-center">
+
+            <!-- izquierda -->
+            <div class="d-flex align-items-center small flex-wrap">
+
+              <mat-icon class="me-1"
+                [ngClass]="operacion.tipoOperacion?.esEgreso ? 'text-color-red' : 'text-color-green'">
+                {{ operacion.tipoOperacion?.esEgreso ? 'arrow_downward' : 'arrow_upward' }}
+              </mat-icon>
+
+              <span class="fw-bold me-2">
+                {{ operacion.monto | currency:'$':'symbol':'1.2-2' }}
+              </span>
+
+              <span class="badge text-bg-warning me-2">
+                {{ operacion.tipoOperacion?.nombre }}
+              </span>
+
+              @if(operacion.entidad){
+                <div class="text-muted me-2 d-flex align-items-center">
+                  <mat-icon class="small-icon me-1">person</mat-icon>
+                  <span>
+                    {{ operacion.entidad.nombre }}
+                  </span>
+                </div>
+              }
+
+              <br>
+
+              @if(operacion.concepto){
+                <div class="text-muted me-2 d-flex align-items-center">
+                  <mat-icon class="small-icon me-1">label</mat-icon>
+                  <span>
+                    {{ operacion.concepto.nombre }}
+                  </span>
+                </div>
+              }
+
+              @if(operacion.metodo){
+                <div class="text-muted me-2 d-flex align-items-center">
+                  <mat-icon class="small-icon me-1">credit_card</mat-icon>
+                  <span>
+                    {{ operacion.metodo.nombre }}
+                  </span>
+                </div>
+              }
+
+              <br>
+
+              @if(operacion.descripcion) {
+                <div class="mt-2 small fst-italic text-muted border-start border-3 ps-2">
+                  {{ operacion.descripcion }}
+                </div>
+              }
+
+            </div>
+
+            <!-- derecha -->
+            <div class="d-flex align-items-center small">
+
+              <span class="badge me-2"
+                [ngClass]="operacion.esResidencia ? 'text-bg-primary' : 'bg-color-pink'">
+                {{ operacion.esResidencia ? 'Residencia' : 'Personal' }}
+              </span>
+
+              <span class="text-muted me-2">
+                {{ operacion.fechaHora | date:'dd/MM/yyyy' }}
+              </span>
+
+              <button mat-icon-button color="primary" (click)="abrirDialogo(operacion)">
+                <mat-icon>edit</mat-icon>
+              </button>
+
+              <button mat-icon-button color="warn" (click)="eliminarOperacion(operacion.id!)">
+                <mat-icon>delete</mat-icon>
+              </button>
+
+            </div>
+
+          </div>
+
+        </mat-list-item>
+        <mat-divider></mat-divider>
+      }
+      @empty {
+        <app-no-data-template></app-no-data-template>
+      }
+    </mat-list>
   </div>
 
   <mat-paginator [length]="totalElements"

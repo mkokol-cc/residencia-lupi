@@ -9,14 +9,27 @@
             }
         </mat-form-field>
 
-        <!-- Es Egreso -->
-        <div class="checkbox-container">
-            <mat-checkbox formControlName="esEgreso">Es Egreso</mat-checkbox>
+        <!-- Impacta en Caja -->
+        <div class="d-flex flex-column mb-3">
+            <label id="impacta-caja-label" class="mat-body-1 mb-2">Impacta en Caja</label>
+            <mat-radio-group formControlName="impactaEnCaja" aria-labelledby="impacta-caja-label" class="d-flex gap-3">
+                <mat-radio-button [value]="true">Sí</mat-radio-button>
+                <mat-radio-button [value]="false">No</mat-radio-button>
+            </mat-radio-group>
         </div>
 
-        <!-- Impacta en Caja -->
-        <div class="checkbox-container">
-            <mat-checkbox formControlName="impactaEnCaja">Impacta en Caja</mat-checkbox>
+        <!-- Es Egreso -->
+        <div class="d-flex flex-column mb-3">
+            <label id="es-egreso-label" class="mat-body-1 mb-2">Tipo de Movimiento</label>
+            <mat-radio-group formControlName="esEgreso" aria-labelledby="es-egreso-label" class="d-flex gap-3">
+                <mat-radio-button [value]="false">
+                    {{ tipoOperacionForm.get('impactaEnCaja')?.value ? 'Ingreso de Dinero' : 'Genera derecho a cobrar' }}
+                </mat-radio-button>
+                <mat-radio-button [value]="true">
+                    {{ tipoOperacionForm.get('impactaEnCaja')?.value ? 'Egreso de Dinero' : 'Genera deuda' }}
+                </mat-radio-button>
+            </mat-radio-group>
         </div>
+
     </div>
 </form>

@@ -21,6 +21,7 @@ import { Concepto } from '../../model/concepto';
 import { TipoOperacion } from '../../model/tipo-operacion';
 import { MetodoPago } from '../../model/metodo-pago';
 import { OperacionFormData } from './operacion-form-data';
+import { NgxCurrencyDirective } from "ngx-currency";
 
 @Component({
   selector: 'app-form-operacion',
@@ -36,6 +37,7 @@ import { OperacionFormData } from './operacion-form-data';
     MatDatepickerModule,
     CdkTextareaAutosize,
     MatCheckboxModule,
+    NgxCurrencyDirective
   ],
   templateUrl: './form-operacion.component.html',
   styleUrl: './form-operacion.component.scss'

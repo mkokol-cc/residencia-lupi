@@ -9,6 +9,7 @@ import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { InMemoryDataService } from './custom-services/in-memory-data.service';
 import { provideNativeDateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { authInterceptor } from './interceptors/auth-token.interceptor';
+import { provideEnvironmentNgxCurrency, NgxCurrencyInputMode } from 'ngx-currency';
 
 
 export const appConfig: ApplicationConfig = {
@@ -30,6 +31,20 @@ export const appConfig: ApplicationConfig = {
         }
       )
     ),*///api fake con 1 segundo de delay
+    provideEnvironmentNgxCurrency({
+      align: "left",
+      allowNegative: false,
+      allowZero: true,
+      decimal: ",",
+      precision: 2,
+      prefix: "$ ",
+      suffix: "",
+      thousands: ".",
+      nullable: true,
+      min: 0,
+      max: null,
+      inputMode: NgxCurrencyInputMode.Financial,
+    }),
   ]
 
 };

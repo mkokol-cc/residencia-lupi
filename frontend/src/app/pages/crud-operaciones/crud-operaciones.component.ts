@@ -217,8 +217,8 @@ export class CrudOperacionesComponent implements OnInit {
 
   private buildFilters = () => ({ ...this.filterForm.value, entidadId: this.filterForm.value.entidad?.id, conceptoId: this.filterForm.value.concepto?.id, tipoOperacionId: this.filterForm.value.tipoOperacion?.id });
   displayFn = (obj: { nombre: string }): string => obj?.nombre || '';
-  private _filter = (value: string | {nombre: string}, list: any[]) => {
-    const filterValue = (typeof value === 'string' ? value : value.nombre).toLowerCase();
+  private _filter = (value: string | {nombre: string} | null, list: any[]) => {
+    const filterValue = (typeof value === 'string' ? value : value?.nombre || '').toLowerCase();
     return list.filter(option => option.nombre.toLowerCase().includes(filterValue));
   }
   

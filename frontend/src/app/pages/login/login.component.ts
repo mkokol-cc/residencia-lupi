@@ -48,7 +48,7 @@ export class LoginComponent {
     if (this.form.valid) {
       this.authService.login(this.form.value).subscribe({
         next: () => {
-          this.router.navigate(['/reportes']);
+          this.router.navigate(['/reportes-operaciones']);
         },
         error: (err) => {
           this.snackBar.open('Error: Usuario o contraseña incorrectos', 'Cerrar', { duration: 3000 });

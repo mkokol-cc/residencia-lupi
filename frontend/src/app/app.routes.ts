@@ -13,6 +13,7 @@ import { CajaComponent } from './pages/caja/caja.component';
 import { CrudOperacionesComponent } from './pages/crud-operaciones/crud-operaciones.component';
 import { CrudTipoOperacionComponent } from './pages/crud-tipo-operacion/crud-tipo-operacion.component';
 import { ReportesOperacionesComponent } from './pages/reportes-operaciones/reportes-operaciones.component';
+import { CajaOperacionesComponent } from './pages/caja-operaciones/caja-operaciones.component';
 
 export const routes: Routes = [
     {path: 'login', component: LoginComponent},
@@ -62,6 +63,11 @@ export const routes: Routes = [
             //redirectTo: 'feed', 
             pathMatch: 'full',
             component: CajaComponent 
+        },{ 
+            path: 'caja-operaciones', 
+            //redirectTo: 'feed', 
+            pathMatch: 'full',
+            component: CajaOperacionesComponent 
         },
         {   path: 'operaciones', 
             pathMatch: 'full', 
