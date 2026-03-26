@@ -48,14 +48,14 @@ export class FilterService {
         if (tipo.impactaEnCaja) {
           pagos += op.monto; // Egreso + Caja = PAGO
         } else {
-          compras += op.monto; // Egreso + No Caja = COMPRA
+          ventas += op.monto; // Egreso + No Caja = VENTA
         }
       } else {
         // Es un ingreso
         if (tipo.impactaEnCaja) {
           cobros += op.monto; // Ingreso + Caja = COBRO
         } else {
-          ventas += op.monto; // Ingreso + No Caja = VENTA
+          compras += op.monto; // Ingreso + No Caja = COMPRAS
         }
       }
     });

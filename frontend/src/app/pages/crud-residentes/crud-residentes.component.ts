@@ -154,6 +154,6 @@ export class CrudResidentesComponent implements OnInit {
   }
 
   verReporte(residente: Residente): void {
-    this.router.navigate(['/reportes'], { queryParams: { residenteId: residente.id } });
+    this.router.navigate(['/reportes-operaciones'], { queryParams: { entidadId: residente.id } });
   }
 }

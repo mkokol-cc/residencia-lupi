@@ -39,7 +39,7 @@ public class ProveedorService extends GenericService<Proveedor, Proveedor, Long>
     protected Proveedor toEntity(Proveedor dto) {
         return dto;
     }
-
+    /*
     public Page<ProveedorDTO> searchProveedores(String search, Pageable pageable) {
         StringBuilder jpql = new StringBuilder(
             "SELECT p, " +
@@ -89,6 +89,69 @@ public class ProveedorService extends GenericService<Proveedor, Proveedor, Long>
         if (search != null && !search.isEmpty()) {
             countQuery.setParameter("search", "%" + search + "%");
         }
+        Long total = countQuery.getSingleResult();
+
+        return new PageImpl<>(dtos, pageable, total);
+    }*/
+    public Page<ProveedorDTO> searchProveedores(String search, Pageable pageable) {
+        StringBuilder jpql = new StringBuilder(
+            "SELECT p, " +
+            "(SELECT COALESCE(SUM(" +
+            "   CASE " +
+            "       WHEN t.esEgreso = true  AND t.impactaEnCaja = false THEN o.monto " +   // egreso no caja (+)
+            "       WHEN t.esEgreso = true  AND t.impactaEnCaja = true  THEN -o.monto " +  // egreso caja (-)
+            "       WHEN t.esEgreso = false AND t.impactaEnCaja = false THEN -o.monto " +  // ingreso no caja (-)
+            "       WHEN t.esEgreso = false AND t.impactaEnCaja = true  THEN o.monto " +   // ingreso caja (+)
+            "       ELSE 0 " +
+            "   END" +
+            "), 0) " +
+            " FROM Operacion o JOIN o.tipoOperacion t " +
+            " WHERE o.entidad.id = p.id) as saldo " +
+            "FROM Proveedor p " +
+            "WHERE 1=1 "
+        );
+
+        if (search != null && !search.isEmpty()) {
+            jpql.append("AND (LOWER(p.nombre) LIKE LOWER(:search) OR p.dniCuit LIKE :search) ");
+        }
+
+        if (pageable.getSort().isSorted()) {
+            jpql.append("ORDER BY ");
+            pageable.getSort().forEach(order -> {
+                if (order.getProperty().equals("saldo")) {
+                    jpql.append("saldo ").append(order.getDirection());
+                } else {
+                    jpql.append("p.").append(order.getProperty()).append(" ").append(order.getDirection());
+                }
+                jpql.append(", ");
+            });
+            jpql.setLength(jpql.length() - 2);
+        }
+
+        TypedQuery<Object[]> query = entityManager.createQuery(jpql.toString(), Object[].class);
+        if (search != null && !search.isEmpty()) {
+            query.setParameter("search", "%" + search + "%");
+        }
+
+        query.setFirstResult((int) pageable.getOffset());
+        query.setMaxResults(pageable.getPageSize());
+
+        List<Object[]> results = query.getResultList();
+        List<ProveedorDTO> dtos = results.stream()
+            .map(row -> new ProveedorDTO((Proveedor) row[0], (Double) row[1]))
+            .collect(Collectors.toList());
+
+        // Count query
+        StringBuilder countJpql = new StringBuilder("SELECT COUNT(p) FROM Proveedor p WHERE 1=1 ");
+        if (search != null && !search.isEmpty()) {
+            countJpql.append("AND (LOWER(p.nombre) LIKE LOWER(:search) OR p.dniCuit LIKE :search) ");
+        }
+
+        TypedQuery<Long> countQuery = entityManager.createQuery(countJpql.toString(), Long.class);
+        if (search != null && !search.isEmpty()) {
+            countQuery.setParameter("search", "%" + search + "%");
+        }
+
         Long total = countQuery.getSingleResult();
 
         return new PageImpl<>(dtos, pageable, total);

@@ -117,6 +117,6 @@ export class CrudProveedoresComponent implements OnInit {
   }
 
   verReporte(proveedor: Proveedor): void {
-    this.router.navigate(['/reportes'], { queryParams: { proveedorId: proveedor.id } });
+    this.router.navigate(['/reportes-operaciones'], { queryParams: { entidadId: proveedor.id } });
   }
 }

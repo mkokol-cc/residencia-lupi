@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { forkJoin } from 'rxjs';
+import { forkJoin, take } from 'rxjs';
 
 // Angular Material
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -31,6 +31,7 @@ import { TipoOperacionService } from '../../custom-services/tipo-operacion.servi
 import { FilterService } from './filter.service';
 import { PdfService } from './pdf.service';
 import { ReporteData } from './reporte-data';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-reportes-operaciones',
@@ -84,7 +85,9 @@ export class ReportesOperacionesComponent implements OnInit {
     private metodoPagoService: MetodoPagoService,
     private tipoOperacionService: TipoOperacionService,
     private filterService: FilterService,
-    private pdfService: PdfService
+    private pdfService: PdfService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.filtroForm = this.fb.group({
       fechaDesde: [null],
@@ -114,7 +117,49 @@ export class ReportesOperacionesComponent implements OnInit {
       this.opcionesFiltro.conceptos = conceptos;
       this.opcionesFiltro.metodosPago = metodosPago;
       this.opcionesFiltro.tiposOperacion = tiposOperacion;
+      this.tomarParametrosUrl();
       this.aplicarFiltros(); // Carga inicial
+    });
+  }
+  tomarParametrosUrl() {
+    // 👇 NUEVO: leer query params
+    this.route.queryParams.pipe(take(1)).subscribe(params => {
+
+      const entidadId = params['entidadId'];
+      const conceptoId = params['conceptoId'];
+      const metodoPagoId = params['metodoPagoId'];
+      const tipoOperacionId = params['tipoOperacionId'];
+
+      if (entidadId) {
+        this.filtroForm.get('entidadId')?.setValue(+entidadId);
+      }
+
+      if (conceptoId) {
+        this.filtroForm.get('conceptoId')?.setValue(+conceptoId);
+      }
+
+      if (metodoPagoId) {
+        this.filtroForm.get('metodoPagoId')?.setValue(+metodoPagoId);
+      }
+
+      if (tipoOperacionId) {
+        this.filtroForm.get('tipoOperacionId')?.setValue(+tipoOperacionId);
+      }
+
+      // limpiar URL
+      if (entidadId || conceptoId || metodoPagoId || tipoOperacionId) {
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: {
+            entidadId: null,
+            conceptoId: null,
+            metodoPagoId: null,
+            tipoOperacionId: null
+          },
+          queryParamsHandling: 'merge',
+          replaceUrl: true
+        });
+      }
     });
   }
 
@@ -124,6 +169,7 @@ export class ReportesOperacionesComponent implements OnInit {
       this.filtroForm.value
     );
     this.reporteData = reporteData;
+    console.log(this.reporteData);
     this.reporteDataView = reporteDataView;
     this.saldo = saldo;
 

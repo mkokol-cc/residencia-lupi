@@ -29,25 +29,29 @@
         }
       </mat-form-field>
 
-      <!-- Pagado Checkbox (condicional) -->
-      @if (operacionForm.get('tipoOperacion')?.value && !operacionForm.get('tipoOperacion')?.value.impactaEnCaja) {
-        <div class="checkbox-container">
-          <mat-checkbox formControlName="pagado">Pagado</mat-checkbox>
-        </div>
-      }
+      @if (!operacionForm.get('id')?.value) {
 
-      <!-- Método de Pago -->
-      <mat-form-field appearance="outline">
-        <mat-label>Método de Pago</mat-label>
-        <mat-select formControlName="metodo">
-          @for (metodo of metodosPago; track metodo.id) {
-            <mat-option [value]="metodo">{{metodo.nombre}}</mat-option>
-          }
-        </mat-select>
-        @if (operacionForm.get('metodo')?.hasError('required')) {
-          <mat-error>El método de pago es requerido.</mat-error>
+        <!-- Pagado Checkbox (condicional) -->
+        @if (operacionForm.get('tipoOperacion')?.value && !operacionForm.get('tipoOperacion')?.value.impactaEnCaja) {
+          <div class="checkbox-container">
+            <mat-checkbox formControlName="pagado">Pagado</mat-checkbox>
+          </div>
         }
-      </mat-form-field>
+
+        <!-- Método de Pago -->
+        <mat-form-field appearance="outline">
+          <mat-label>Método de Pago</mat-label>
+          <mat-select formControlName="metodo">
+            @for (metodo of metodosPago; track metodo.id) {
+              <mat-option [value]="metodo">{{metodo.nombre}}</mat-option>
+            }
+          </mat-select>
+          @if (operacionForm.get('metodo')?.hasError('required')) {
+            <mat-error>El método de pago es requerido.</mat-error>
+          }
+        </mat-form-field>
+        
+      }
 
       <!-- Monto -->
       <mat-form-field appearance="outline">

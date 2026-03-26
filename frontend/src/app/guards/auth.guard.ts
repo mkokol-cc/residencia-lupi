@@ -10,7 +10,7 @@ export const authGuard: CanActivateFn = (route, state): Observable<boolean | Url
   //return true;
   return authService.isAuthenticated().pipe(
     map(isAuth => {
-      //console.log("Soy el guard, isAuth: "+isAuth)
+      console.log("Soy el guard, isAuth: "+isAuth)
       if (isAuth) {
         return true;
       }

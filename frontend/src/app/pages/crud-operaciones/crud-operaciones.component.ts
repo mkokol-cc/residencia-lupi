@@ -31,6 +31,7 @@ import { MetodoPago } from '../../model/metodo-pago';
 import { TipoOperacion } from '../../model/tipo-operacion';
 import { TipoOperacionService } from '../../custom-services/tipo-operacion.service';
 import { OperacionFormData } from '../../forms/form-operacion/operacion-form-data';
+import { NgxCurrencyDirective } from 'ngx-currency';
 
 @Component({
   selector: 'app-crud-operaciones',
@@ -50,7 +51,8 @@ import { OperacionFormData } from '../../forms/form-operacion/operacion-form-dat
     MatPaginatorModule,
     NoDataTemplateComponent,
     MatAutocompleteModule,
-    MatRadioModule
+    MatRadioModule,
+    NgxCurrencyDirective
   ],
   templateUrl: './crud-operaciones.component.html',
   styleUrl: './crud-operaciones.component.scss'
@@ -168,6 +170,7 @@ export class CrudOperacionesComponent implements OnInit {
 
   private guardarOperacionData(operacionData: OperacionFormData): void {
     const operacion: Operacion = {
+      id : operacionData.id,
       tipoOperacion : operacionData.tipoOperacion,
       entidad : operacionData.entidad,
       esResidencia : operacionData.esResidencia,
@@ -178,6 +181,9 @@ export class CrudOperacionesComponent implements OnInit {
       descripcion : operacionData.descripcion,
     }
     this.guardarOperacion(operacion);
+    if(operacionData.id){
+      return;
+    }
     if(!(operacionData.tipoOperacion.impactaEnCaja) && operacionData.pagado){
       let tipoOperacionDeCaja:TipoOperacion;
       if(operacionData.tipoOperacion.esEgreso){

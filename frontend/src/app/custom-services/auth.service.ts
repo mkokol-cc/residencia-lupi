@@ -19,6 +19,7 @@ export class AuthService {
       tap(response => {
         if (response.accessToken) {
           this.setToken(response.accessToken);
+          this.router.navigate(['/operaciones']);
         }
       })
     );
@@ -70,12 +71,19 @@ export class AuthService {
    * Este es el método seguro que se debe usar en los guards de las rutas.
    */
   public isAuthenticated(): Observable<boolean> {
-    //const token = this.getToken();
+    // Si ya estamos en la página de login, no tiene sentido validar un token.
+    // Si el token fuera válido, un guard ya nos debería haber redirigido a otra página.
+    /*
+    if (this.router.url.includes('/login')) {
+      return of(false);
+    }*/
 
+    //const token = this.getToken();
+    /*
     if (!this.isLoggedIn()) {
       //console.log('AuthGuard: Token ausente o inválido (verificación cliente). Acceso denegado.');
       return of(false);
-    }
+    }*/
 
     //const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
 

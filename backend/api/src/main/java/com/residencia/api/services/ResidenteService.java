@@ -48,9 +48,17 @@ public class ResidenteService extends GenericService<Residente, Residente, Long>
     public Page<ResidenteDTO> searchResidentes(String search, Pageable pageable) {
         StringBuilder jpql = new StringBuilder(
             "SELECT r, " +
-            "(SELECT COALESCE(SUM(CASE WHEN t.esEgreso = false THEN o.monto ELSE -o.monto END), 0) " +
+            "(SELECT COALESCE(SUM(" +
+            "   CASE " +
+            "       WHEN t.esEgreso = true  AND t.impactaEnCaja = false THEN o.monto " +   // egreso no caja (+)
+            "       WHEN t.esEgreso = true  AND t.impactaEnCaja = true  THEN -o.monto " +  // egreso caja (-)
+            "       WHEN t.esEgreso = false AND t.impactaEnCaja = false THEN -o.monto " +  // ingreso no caja (-)
+            "       WHEN t.esEgreso = false AND t.impactaEnCaja = true  THEN o.monto " +   // ingreso caja (+)
+            "       ELSE 0 " +
+            "   END" +
+            "), 0) " +
             " FROM Operacion o JOIN o.tipoOperacion t " +
-            " WHERE o.entidad.id = r.id AND t.impactaEnCaja = true) as saldo " +
+            " WHERE o.entidad.id = r.id) as saldo " +
             "FROM Residente r " +
             "WHERE 1=1 "
         );
@@ -90,10 +98,12 @@ public class ResidenteService extends GenericService<Residente, Residente, Long>
         if (search != null && !search.isEmpty()) {
             countJpql.append("AND (LOWER(r.nombre) LIKE LOWER(:search) OR LOWER(r.apellido) LIKE LOWER(:search) OR r.dniCuit LIKE :search) ");
         }
+
         TypedQuery<Long> countQuery = entityManager.createQuery(countJpql.toString(), Long.class);
         if (search != null && !search.isEmpty()) {
             countQuery.setParameter("search", "%" + search + "%");
         }
+
         Long total = countQuery.getSingleResult();
 
         return new PageImpl<>(dtos, pageable, total);

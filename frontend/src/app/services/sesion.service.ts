@@ -48,7 +48,7 @@ export class SesionService {
       this.setToken(obj.token)
       this.setUsername(obj.username)
       this.setRole(obj.role)
-      this.router.navigateByUrl('/mis-articulos')
+      //this.router.navigateByUrl('/mis-articulos')
     })
   }
 

@@ -57,6 +57,7 @@ export class FormOperacionComponent implements OnInit, OnChanges {
 
   constructor(private fb: FormBuilder) {
     this.operacionForm = this.fb.group({
+      id: [null],
       tipoOperacion: [null, Validators.required],
       esResidencia: [null, Validators.required],
       monto: [null, [Validators.required, Validators.min(0.01)]],
